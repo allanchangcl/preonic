@@ -38,11 +38,6 @@ enum preonic_keycodes {
   VIM_PASTE
 };
 
-// Tap Dance declarations
-enum {
-    TD_SHIFT_CAPS,
-};
-
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Qwerty
@@ -62,8 +57,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   LT(_MY_RGB, KC_ESC), KC_1, KC_2, KC_3, KC_4, KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS,
   KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC,
   KC_BSLS, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-  TD(TD_SHIFT_CAPS), KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH, KC_SFTENT,
-  BACKLIT, KC_LCTL, KC_LALT, KC_LGUI, LOWER, MT(MOD_LSFT, KC_BSPC), KC_SPC, RAISE, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT
+  MT(MOD_LSFT, KC_CAPS), KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH, KC_SFTENT,
+  BACKLIT, KC_LCTL, KC_LALT, KC_LGUI, LOWER,   KC_BSPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
 
 /* Colemak
@@ -380,10 +375,3 @@ rgblight_set_layer_state(2, layer_state_cmp(state, _LOWER));
 rgblight_set_layer_state(3, layer_state_cmp(state, _ADJUST));
 return state;
 }
-
-
-// Tap Dance definitions
-qk_tap_dance_action_t tap_dance_actions[] = {
-    // Tap once for Escape, twice for Caps Lock
-    [TD_SHIFT_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CAPS),
-};
