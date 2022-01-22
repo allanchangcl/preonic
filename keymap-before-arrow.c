@@ -36,8 +36,7 @@ enum preonic_keycodes {
   RAISE,
   BACKLIT,
   NB_SET_BLUE,
-  VIM_PASTE,
-  SFTSPC,
+  VIM_PASTE
 };
 
 // Tap Dance declarations
@@ -85,8 +84,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   TD(FAT_ARROW), KC_1, KC_2, KC_3, KC_4, KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    TD(ARROW_OP),
   KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC,
   LT(_MY_RGB, KC_ESC), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-  TD(SHIFT_CAPS), KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_UP, KC_SFTENT,
-  LT(_MY_FUNCTION, KC_DEL), KC_LCTL, KC_LALT, KC_LGUI, LOWER, SFTSPC, KC_SPC, RAISE, KC_SLSH, KC_LEFT, KC_DOWN, KC_RGHT
+  TD(SHIFT_CAPS), KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT,  KC_SLSH, KC_SFTENT,
+  LT(_MY_FUNCTION, KC_DEL), KC_LCTL, KC_LALT, KC_LGUI, MT(MOD_LSFT, KC_BSPC), LOWER, RAISE, KC_SPC, KC_LEFT, KC_DOWN, KC_UP, KC_RGHT
 ),
 
 /* Colemak
@@ -148,8 +147,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC,
   KC_TILD, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_DEL,
   KC_DEL,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE,
-  _______, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12,S(KC_NUHS),S(KC_NUBS),KC_HOME, KC_VOLU, _______,
-  _______, _______, _______, _______, _______, _______, _______, _______, KC_END, KC_MNXT, KC_VOLD, KC_MPLY
+  _______, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, KC_F12,S(KC_NUHS),S(KC_NUBS),KC_HOME, KC_END, _______,
+  _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
 ),
 
 /* Raise
@@ -169,8 +168,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
   KC_GRV,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_DEL,
   KC_DEL,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_MINS, KC_EQL,  KC_LBRC, KC_RBRC, KC_BSLS,
-  _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NUHS, KC_NUBS, KC_PGUP, KC_VOLU, _______,
-  _______, _______, _______, _______, _______, _______, _______, _______, KC_PGDN, KC_MNXT, KC_VOLD, KC_MPLY
+  _______, KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_NUHS, KC_NUBS, KC_PGUP, KC_PGDN, _______,
+  _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
 ),
 
 /* Adjust (Lower + Raise)
@@ -213,7 +212,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-  static bool bsdel_mods = false;
   switch (keycode) {
         case QWERTY:
           if (record->event.pressed) {
@@ -273,38 +271,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           }
           return false;
           break;
-        case NB_SET_BLUE:
-          if (record->event.pressed) {
-            rgblight_setrgb(RGB_BLUE);
-          }
-          return false;
-          break;
-        case VIM_PASTE:
-          if (record->event.pressed) {
-            SEND_STRING(SS_DOWN(X_LSFT) SS_TAP(X_QUOT) SS_UP(X_LSFT) SS_TAP(X_0) SS_TAP(X_P));
-          }
-          return false;
-          break;
-        case SFTSPC:
-          if (record->event.pressed) {
-            if (get_mods() & MOD_BIT(KC_LSFT)) {
-              unregister_code(KC_LSFT);
-              register_code(KC_BSPC);
-              bsdel_mods = true;
-            } else {
-              register_code(KC_SPC);
-            }
-          } else {
-            if (bsdel_mods) {
-              unregister_code(KC_BSPC);
-              register_code(KC_LSFT);
-              bsdel_mods = false;
-            } else {
-              unregister_code(KC_SPC);
-            }
-          }
-          return false;
-          break;
+	case NB_SET_BLUE:
+	  if (record->event.pressed) {
+	    rgblight_setrgb(RGB_BLUE);
+	  }
+	  return false;
+	  break;
+	case VIM_PASTE:
+	  if (record->event.pressed) {
+	    SEND_STRING(SS_DOWN(X_LSFT) SS_TAP(X_QUOT) SS_UP(X_LSFT) SS_TAP(X_0) SS_TAP(X_P));
+	  }
+	  return false;
+	  break;
       }
     return true;
 };
