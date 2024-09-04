@@ -501,7 +501,8 @@ void eq_finished(tap_dance_state_t *state, void *user_data) {
     current_tap_state.state = cur_dance(state);
     switch (current_tap_state.state) {
         case TD_SINGLE_TAP: register_code16(KC_EQUAL); break;
-        case TD_SINGLE_HOLD: SEND_STRING("=>"); break;
+        // case TD_SINGLE_HOLD: SEND_STRING("=>"); break;
+        case TD_SINGLE_HOLD: SEND_STRING("|>"); break;
         case TD_DOUBLE_TAP: SEND_STRING("=="); break;
         case TD_DOUBLE_HOLD: SEND_STRING("=="); break;
         // Last case is for fast typing. Assuming your key is `f`:
