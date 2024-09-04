@@ -64,10 +64,7 @@ enum {
     FAT_ARROW
 };
 
-// Custom macros
-#define SFT_ENT     SFT_T(KC_ENT)               // Tap for Enter, hold for Shift
-
-td_state_t cur_dance(tap_dance_state_t *state);
+td_state_t cur_dance(qk_tap_dance_state_t *state);
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -88,8 +85,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   TD(FAT_ARROW), KC_1, KC_2, KC_3, KC_4, KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    TD(ARROW_OP),
   KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC,
   LT(_MY_RGB, KC_ESC), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
-  KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_UP, SFT_ENT,
-  LT(_MY_FUNCTION, KC_DEL), KC_LCTL, KC_LALT, KC_LGUI, LOWER, KC_SPC, KC_SPC, RAISE, KC_SLSH, KC_LEFT, KC_DOWN, KC_RGHT
+  KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_UP, KC_SFTENT,
+  LT(_MY_FUNCTION, KC_DEL), KC_LCTL, KC_LALT, KC_LGUI, LOWER, SFTSPC, KC_SPC, RAISE, KC_SLSH, KC_LEFT, KC_DOWN, KC_RGHT
 ),
 
 /* Colemak
@@ -191,9 +188,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
 [_ADJUST] = LAYOUT_preonic_grid(
   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,
-  _______, QK_BOOT, DB_TOGG,   _______, _______, _______, _______, _______, _______, _______, _______, KC_DEL,
-  _______, _______, MU_NEXT,  AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, QWERTY,  COLEMAK, DVORAK,  _______, _______,
-  _______, AU_PREV,  AU_NEXT,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______, _______, _______, _______,
+  _______, RESET,   DEBUG,   _______, _______, _______, _______, TERM_ON, TERM_OFF,_______, _______, KC_DEL,
+  _______, _______, MU_MOD,  AU_ON,   AU_OFF,  AG_NORM, AG_SWAP, QWERTY,  COLEMAK, DVORAK,  _______, _______,
+  _______, MUV_DE,  MUV_IN,  MU_ON,   MU_OFF,  MI_ON,   MI_OFF,  _______, _______, _______, _______, _______,
   _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
 ),
 
@@ -437,7 +434,7 @@ return state;
 }
 
 
-td_state_t cur_dance(tap_dance_state_t *state) {
+td_state_t cur_dance(qk_tap_dance_state_t *state) {
     if (state->count == 1) {
         if (state->interrupted || !state->pressed) return TD_SINGLE_TAP;
         // Key has not been interrupted, but the key is still held. Means you want to send a 'HOLD'.
@@ -466,7 +463,7 @@ static td_tap_t current_tap_state = {
     .state = TD_NONE
 };
 
-void dash_finished(tap_dance_state_t *state, void *user_data) {
+void dash_finished(qk_tap_dance_state_t *state, void *user_data) {
     current_tap_state.state = cur_dance(state);
     switch (current_tap_state.state) {
         case TD_SINGLE_TAP: register_code16(KC_MINUS); break;
@@ -483,7 +480,7 @@ void dash_finished(tap_dance_state_t *state, void *user_data) {
     }
 }
 
-void dash_reset(tap_dance_state_t *state, void *user_data) {
+void dash_reset(qk_tap_dance_state_t *state, void *user_data) {
     switch (current_tap_state.state) {
         case TD_SINGLE_TAP: unregister_code16(KC_MINUS); break;
         case TD_SINGLE_HOLD: break;
@@ -497,7 +494,7 @@ void dash_reset(tap_dance_state_t *state, void *user_data) {
     current_tap_state.state = TD_NONE;
 }
 
-void eq_finished(tap_dance_state_t *state, void *user_data) {
+void eq_finished(qk_tap_dance_state_t *state, void *user_data) {
     current_tap_state.state = cur_dance(state);
     switch (current_tap_state.state) {
         case TD_SINGLE_TAP: register_code16(KC_EQUAL); break;
@@ -514,7 +511,7 @@ void eq_finished(tap_dance_state_t *state, void *user_data) {
     }
 }
 
-void eq_reset(tap_dance_state_t *state, void *user_data) {
+void eq_reset(qk_tap_dance_state_t *state, void *user_data) {
     switch (current_tap_state.state) {
         case TD_SINGLE_TAP: unregister_code16(KC_EQUAL); break;
         case TD_SINGLE_HOLD: break;
@@ -529,7 +526,7 @@ void eq_reset(tap_dance_state_t *state, void *user_data) {
 }
 
 // Tap Dance definitions
-tap_dance_action_t tap_dance_actions[] = {
+qk_tap_dance_action_t tap_dance_actions[] = {
     // Tap once for Escape, twice for Caps Lock
     [SHIFT_CAPS] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CAPS),
     [ARROW_OP] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, dash_finished, dash_reset),
